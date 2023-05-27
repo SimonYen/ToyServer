@@ -18,7 +18,7 @@ public:
 	Cond()
 	{
 		if (pthread_cond_init(&cond, nullptr) != 0)
-			throw std::exception();
+			throw std::runtime_error("无法初始化条件变量！");
 	}
 	// 销毁条件变量
 	~Cond()

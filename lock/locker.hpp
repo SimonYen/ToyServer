@@ -1,8 +1,8 @@
 #ifndef LOCKER_HPP
 #define LOCKER_HPP
 
-#include <exception>
 #include <pthread.h>
+#include <exception>
 
 /*
 该文件封装了互斥锁类
@@ -18,7 +18,7 @@ public:
 	Locker()
 	{
 		if (pthread_mutex_init(&mutex, nullptr) != 0)
-			throw std::exception();
+			throw std::runtime_error("无法初始化互斥锁！");
 	}
 	// 销毁互斥锁
 	~Locker()
@@ -35,6 +35,11 @@ public:
 	bool unlock()
 	{
 		return pthread_mutex_unlock(&mutex) == 0;
+	}
+	// 获取互斥锁指针
+	pthread_mutex_t *get()
+	{
+		return &mutex;
 	}
 };
 

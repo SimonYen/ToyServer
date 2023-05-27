@@ -1,0 +1,4 @@
+#ifndef MYSQL_CONNECTION_POOL
+#define MYSQL_CONNECTION_POOL
+
+#endif
