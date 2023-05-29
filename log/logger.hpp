@@ -26,7 +26,6 @@ private:
 	BlockQueue<std::string> *log_queque; // 阻塞队列
 	Locker mutex;
 	bool is_async;
-	int close_log;
 
 private:
 	Logger()
@@ -61,7 +60,7 @@ public:
 	{
 		Logger::get_instance()->async_write_log();
 	}
-	bool init(const char *_file_name, int _close_log, int _log_buf_size = 8192, int _max_lines = 5000000, int _max_queue_size = 0)
+	bool init(const char *_file_name, int _log_buf_size = 8192, int _max_lines = 5000000, int _max_queue_size = 0)
 	{
 		// 如果设置阻塞队列大小为正数，那么就是开启异步
 		if (_max_queue_size > 0)
@@ -72,7 +71,6 @@ public:
 			pthread_t tid;
 			pthread_create(&tid, nullptr, flush_log_thread, nullptr);
 		}
-		close_log = _close_log;
 		log_buf_size = _log_buf_size;
 		buf = new char[log_buf_size];
 		memset(buf, '\0', log_buf_size);
@@ -103,11 +101,91 @@ public:
 		file = fopen(log_full_name, "a");
 		return file == nullptr ? false : true;
 	}
+	// 写日志
 	void write_log(int _level, const char *format, ...)
 	{
+		// 获取当前时间
+		timeval now = {0, 0};
+		gettimeofday(&now, nullptr);
+		auto t = now.tv_sec;
+		auto sys_tm = localtime(&t);
+		char s[16] = {0};
+		switch (_level)
+		{
+		case 0:
+			strcpy(s, "[DEBUG]:");
+			break;
+		case 1:
+			strcpy(s, "[INFO]:");
+			break;
+		case 2:
+			strcpy(s, "[WARN]:");
+			break;
+		case 3:
+			strcpy(s, "[ERROR]:");
+			break;
+
+		default:
+			strcpy(s, "[INFO]:");
+			break;
+		}
+		mutex.lock();
+		lines_count++;
+		// 日志行数并未达到最大值，并且当前天数已经不是创建Logger那天的天数
+		if (today != sys_tm->tm_mday || lines_count % max_lines == 0) // 这里应该是&&，我觉得，但是为了保险还是用原来的这个，毕竟只是为了找工作
+		{
+			// 新文件名
+			char new_log[256] = {0};
+			fflush(file);
+			fclose(file);
+			char tail[16] = {0};
+			snprintf(tail, 16, "%d_%02d_%02d_", sys_tm->tm_year + 1900, sys_tm->tm_mon + 1, sys_tm->tm_mday);
+
+			if (today != sys_tm->tm_mday)
+			{
+				snprintf(new_log, 255, "%s%s%s", path_name, tail, file_name);
+				// 更新日期
+				today = sys_tm->tm_mday;
+				lines_count = 0;
+			}
+			else
+				snprintf(new_log, 255, "%s%s%s.%lld", path_name, tail, file_name, lines_count / max_lines);
+			// 创建新文件
+			file = fopen(new_log, "a");
+		}
+		mutex.unlock();
+		// 可变参数
+		va_list valst;
+		va_start(valst, format);
+
+		std::string log_str;
+		mutex.lock();
+
+		int n = snprintf(buf, 48, "%d-%02d-%02d %02d:%02d:%02d.%06ld %s ",
+						 sys_tm->tm_year + 1900,
+						 sys_tm->tm_mon + 1,
+						 sys_tm->tm_mday,
+						 sys_tm->tm_hour, sys_tm->tm_min, sys_tm->tm_sec, now.tv_usec, s);
+		int m = vsnprintf(buf + n, log_buf_size - n - 1, format, valst);
+		buf[n + m] = '\n';
+		buf[n + m + 1] = '\0';
+		log_str = buf;
+		mutex.unlock();
+		if (is_async && !log_queque->full())
+			log_queque->push(log_str);
+		else // 直接写入文件
+		{
+			mutex.lock();
+			fputs(log_str.c_str(), file);
+			mutex.unlock();
+		}
+		va_end(valst);
 	}
 	void flush()
 	{
+		mutex.lock();
+		fflush(file);
+		mutex.unlock();
 	}
 };
 #endif
