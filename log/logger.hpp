@@ -26,12 +26,14 @@ private:
 	BlockQueue<std::string> *log_queque; // 阻塞队列
 	Locker mutex;
 	bool is_async;
+	bool log_on; // 是否开启日志
 
 private:
 	Logger()
 	{
 		lines_count = 0;
 		is_async = false;
+		log_on = false;
 	}
 	virtual ~Logger()
 	{
@@ -60,8 +62,9 @@ public:
 	{
 		Logger::get_instance()->async_write_log();
 	}
-	bool init(const char *_file_name, int _log_buf_size = 8192, int _max_lines = 5000000, int _max_queue_size = 0)
+	bool init(const char *_file_name, int _log_buf_size = 8192, int _max_lines = 5000000, int _max_queue_size = 0, bool _log_on)
 	{
+		log_on = _log_on;
 		// 如果设置阻塞队列大小为正数，那么就是开启异步
 		if (_max_queue_size > 0)
 		{
@@ -188,4 +191,32 @@ public:
 		mutex.unlock();
 	}
 };
+
+#define LOG_DEBUG(format, ...)                                       \
+	if (log_on)                                                      \
+	{                                                                \
+		Logger::get_instance()->write_log(0, format, ##__VA_ARGS__); \
+		Logger::get_instance()->flush();                             \
+	}
+
+#define LOG_INFO(format, ...)                                        \
+	if (log_on)                                                      \
+	{                                                                \
+		Logger::get_instance()->write_log(1, format, ##__VA_ARGS__); \
+		Logger::get_instance()->flush();                             \
+	}
+
+#define LOG_WARN(format, ...)                                        \
+	if (log_on)                                                      \
+	{                                                                \
+		Logger::get_instance()->write_log(2, format, ##__VA_ARGS__); \
+		Logger::get_instance()->flush();                             \
+	}
+
+#define LOG_ERROR(format, ...)                                       \
+	if (log_on)                                                      \
+	{                                                                \
+		Logger::get_instance()->write_log(3, format, ##__VA_ARGS__); \
+		Logger::get_instance()->flush();                             \
+	}
 #endif
