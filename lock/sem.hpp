@@ -27,6 +27,11 @@ public:
 		if (sem_init(&sem, 0, 0) != 0)
 			throw std::exception();
 	}
+	Sem(int num)
+	{
+		if (sem_init(&sem, 0, num) != 0)
+			throw std::exception();
+	}
 	// 销毁信号量
 	~Sem()
 	{
