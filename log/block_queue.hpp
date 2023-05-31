@@ -8,7 +8,7 @@
 #include "../lock/cond.hpp"
 #include "../lock/locker.hpp"
 
-template <class T>
+template <typename T>
 class BlockQueue
 {
 private:
@@ -177,5 +177,4 @@ public:
 		return true;
 	}
 };
-
 #endif
