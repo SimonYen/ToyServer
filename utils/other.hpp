@@ -2,6 +2,7 @@
 #define OTHER_H
 
 #include "timer.h"
+#include "utils.h"
 
 struct client_data
 {
@@ -11,6 +12,12 @@ struct client_data
 };
 
 // 回调函数
-void callback_func(client_data *user_data);
+void callback_func(client_data *user_data)
+{
+	epoll_ctl(Utils::epoll_fd, EPOLL_CTL_DEL, user_data->sockfd, 0);
+	assert(user_data);
+	close(user_data->sockfd);
+	http_conn::user_count--;
+}
 
 #endif

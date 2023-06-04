@@ -23,6 +23,7 @@
 #include <time.h>
 
 #include "../log/logger.hpp"
+#include "other.hpp"
 
 // 定时器
 class Timer
