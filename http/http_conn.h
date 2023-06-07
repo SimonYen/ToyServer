@@ -66,6 +66,72 @@ public:
 public:
 	HttpConnection() {}
 	~HttpConnection() {}
+
+public:
+	void init(int sockfd, const sockaddr_in &addr);
+	void close_conn(bool read_close = true);
+	void process();
+	bool read_once();
+	bool write();
+	sockaddr_in *get_address()
+	{
+		return &address;
+	}
+	void init_mysql_result(ConnectionPool *conn_pool);
+
+private:
+	void init();
+	HTTP_CODE process_read();
+	bool process_write(HTTP_CODE ret);
+	HTTP_CODE parse_request_line(char *text);
+	HTTP_CODE parse_headers(char *text);
+	HTTP_CODE parse_content(char *text);
+	HTTP_CODE do_request();
+	char *get_line()
+	{
+		return read_buf + start_line;
+	}
+	LINE_STATUS parse_line();
+	void unmap();
+	bool add_response(const char *format, ...);
+	bool add_content(const char *content);
+	bool add_status_line(int status, const char *title);
+	bool add_headers(int content_length);
+	bool add_content_type();
+	bool add_content_length(int content_length);
+	bool add_linger();
+	bool add_blank_line();
+
+public:
+	static int epoll_fd;
+	static int user_count;
+	MYSQL *mysql;
+
+private:
+	int sockfd;
+	sockaddr_in address;
+	char read_buf[READ_BUFFER_SIZE];
+	int read_idx;
+	int checked_idx;
+	int start_line;
+	char write_buf[WRITE_BUFFER_SIZE];
+	int write_idx;
+	CHECK_STATE check_state;
+	METHOD method;
+	char read_file[FILENAME_LEN];
+	char *url;
+	char *version;
+	char *host;
+	int content_length;
+	bool linger;
+	char *file_address;
+	struct stat file_stat;
+	struct iovec iv[2];
+	int iv_count;
+	int cgi;
+	char *m_string;
+	int bytes_to_send;
+	int bytes_have_send;
 };
 
 #endif
