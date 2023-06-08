@@ -118,7 +118,7 @@ private:
 	int write_idx;
 	CHECK_STATE check_state;
 	METHOD method;
-	char read_file[FILENAME_LEN];
+	char real_file[FILENAME_LEN];
 	char *url;
 	char *version;
 	char *host;
@@ -132,6 +132,7 @@ private:
 	char *m_string;
 	int bytes_to_send;
 	int bytes_have_send;
+	bool log_on;
 };
 
 #endif
