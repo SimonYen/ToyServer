@@ -204,3 +204,48 @@ HttpConnection::LINE_STATUS HttpConnection::parse_line()
 	}
 	return LINE_OPEN;
 }
+
+// 循环读取客户数据，直到无数据可读或对方关闭连接
+// 非阻塞ET工作模式下，需要一次性将数据读完
+bool HttpConnection::read_once()
+{
+	if (read_idx >= READ_BUFFER_SIZE)
+	{
+		return false;
+	}
+	int bytes_read = 0;
+
+#ifdef connfdLT
+
+	bytes_read = recv(sockfd, read_buf + read_idx, READ_BUFFER_SIZE - read_idx, 0);
+
+	if (bytes_read <= 0)
+	{
+		return false;
+	}
+
+	read_idx += bytes_read;
+
+	return true;
+
+#endif
+
+#ifdef connfdET
+	while (true)
+	{
+		bytes_read = recv(sockfd, read_buf + read_idx, READ_BUFFER_SIZE - read_idx, 0);
+		if (bytes_read == -1)
+		{
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+				break;
+			return false;
+		}
+		else if (bytes_read == 0)
+		{
+			return false;
+		}
+		read_idx += bytes_read;
+	}
+	return true;
+#endif
+}
