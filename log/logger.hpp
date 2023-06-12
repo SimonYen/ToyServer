@@ -107,6 +107,8 @@ public:
 	// 写日志
 	void write_log(int _level, const char *format, ...)
 	{
+		if (!log_on)
+			return;
 		// 获取当前时间
 		timeval now = {0, 0};
 		gettimeofday(&now, nullptr);
@@ -192,31 +194,20 @@ public:
 	}
 };
 
-#define LOG_DEBUG(format, ...)                                       \
-	if (log_on)                                                      \
-	{                                                                \
-		Logger::get_instance()->write_log(0, format, ##__VA_ARGS__); \
-		Logger::get_instance()->flush();                             \
-	}
+#define LOG_DEBUG(format, ...)                                   \
+	Logger::get_instance()->write_log(0, format, ##__VA_ARGS__); \
+	Logger::get_instance()->flush();
 
-#define LOG_INFO(format, ...)                                        \
-	if (log_on)                                                      \
-	{                                                                \
-		Logger::get_instance()->write_log(1, format, ##__VA_ARGS__); \
-		Logger::get_instance()->flush();                             \
-	}
+#define LOG_INFO(format, ...)                                    \
+	Logger::get_instance()->write_log(1, format, ##__VA_ARGS__); \
+	Logger::get_instance()->flush();
 
-#define LOG_WARN(format, ...)                                        \
-	if (log_on)                                                      \
-	{                                                                \
-		Logger::get_instance()->write_log(2, format, ##__VA_ARGS__); \
-		Logger::get_instance()->flush();                             \
-	}
+#define LOG_WARN(format, ...)                                    \
+	Logger::get_instance()->write_log(2, format, ##__VA_ARGS__); \
+	Logger::get_instance()->flush();
 
-#define LOG_ERROR(format, ...)                                       \
-	if (log_on)                                                      \
-	{                                                                \
-		Logger::get_instance()->write_log(3, format, ##__VA_ARGS__); \
-		Logger::get_instance()->flush();                             \
-	}
+#define LOG_ERROR(format, ...)                                   \
+	Logger::get_instance()->write_log(3, format, ##__VA_ARGS__); \
+	Logger::get_instance()->flush();
+
 #endif

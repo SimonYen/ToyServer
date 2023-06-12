@@ -97,7 +97,7 @@ public:
 			throw std::invalid_argument("线程池中线程个数和最大请求量必须为正数！");
 		threads = new pthread_t[thread_number];
 		if (!threads)
-			throw std::bad_alloc("无法创建线程数组！");
+			throw std::bad_alloc();
 		// 创建线程池
 		for (int i = 0; i < thread_number; i++)
 		{
