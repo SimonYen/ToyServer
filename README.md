@@ -27,5 +27,8 @@ cd build && cmake ..
 ```bash
 make
 ```
-
+编译后的二进制文件在bin目录下（如果没有这个目录的话会自动创建的）。
+```bash
+cd ../bin && ./server
+```
 ENJOY~
