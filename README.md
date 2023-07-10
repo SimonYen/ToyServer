@@ -8,6 +8,25 @@ C++编写的Webserver
 
 - include 头文件存放的目录
 
+## 运行前的数据库准备
+
+```sql
+// 建立yourdb库
+create database yourdb;
+
+// 创建user表
+USE yourdb;
+CREATE TABLE user(
+    username char(50) NULL,
+    password char(50) NULL
+)ENGINE=InnoDB;
+
+// 添加数据
+INSERT INTO user(username, password) VALUES('name', 'password');
+```
+
+
+
 ## 编译方法
 
 首先在项目的根目录上新建一个临时目录，用于保存cmake生成的中间文件，保持目录简洁（这里假设临时目录为build)。
@@ -27,8 +46,11 @@ cd build && cmake ..
 ```bash
 make
 ```
-编译后的二进制文件在bin目录下（如果没有这个目录的话会自动创建的）。
+
+编译后的二进制文件在根目录下。
+
 ```bash
-cd ../bin && ./server
+cd .. && ./server
 ```
+
 ENJOY~
