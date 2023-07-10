@@ -25,8 +25,6 @@ CREATE TABLE user(
 INSERT INTO user(username, password) VALUES('name', 'password');
 ```
 
-
-
 ## 编译方法
 
 首先在项目的根目录上新建一个临时目录，用于保存cmake生成的中间文件，保持目录简洁（这里假设临时目录为build)。
