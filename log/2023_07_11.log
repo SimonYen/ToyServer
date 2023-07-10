@@ -1,0 +1,24 @@
+2023-07-11 01:19:48.881551 [info] : ========== Server init ==========
+2023-07-11 01:19:48.881679 [info] : Port:1316, OpenLinger: false
+2023-07-11 01:19:48.881686 [info] : Listen Mode: ET, OpenConn Mode: ET
+2023-07-11 01:19:48.881692 [info] : LogSys level: 1
+2023-07-11 01:19:48.881697 [info] : srcDir: /home/simon/ToyServer/resources/
+2023-07-11 01:19:48.881702 [info] : SqlConnPool num: 12, ThreadPool num: 6
+2023-07-11 01:19:48.881707 [info] : ========== Server start ==========
+2023-07-11 01:20:33.193426 [info] : Client[18](127.0.0.1:35004) in, userCount:1
+2023-07-11 01:20:33.193693 [info] : Client[18] in!
+2023-07-11 01:20:33.194045 [info] : Client[19](127.0.0.1:39100) in, userCount:2
+2023-07-11 01:20:33.194268 [info] : Client[19] in!
+2023-07-11 01:20:33.664424 [info] : Client[20](127.0.0.1:21674) in, userCount:3
+2023-07-11 01:20:33.665431 [info] : Client[20] in!
+2023-07-11 01:20:33.670328 [info] : Client[21](127.0.0.1:23210) in, userCount:4
+2023-07-11 01:20:33.670452 [info] : Client[21] in!
+2023-07-11 01:20:33.685700 [info] : Client[22](127.0.0.1:25770) in, userCount:5
+2023-07-11 01:20:33.685936 [info] : Client[22] in!
+2023-07-11 01:20:33.747940 [info] : Client[23](127.0.0.1:26794) in, userCount:6
+2023-07-11 01:20:33.748173 [info] : Client[23] in!
+2023-07-11 01:21:03.580249 [info] : Verify name:simon pwd:yanzengyi123
+2023-07-11 01:21:03.599101 [error]: RequestLine Error
+2023-07-11 01:21:03.599493 [info] : Client[20] quit!
+2023-07-11 01:21:03.599640 [info] : Client[20](127.0.0.1:21674) quit, UserCount:5
+2023-07-11 01:21:04.163913 [info] : Client[20](127.0.0.1:24213) in, userCount:6
